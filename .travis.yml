@@ -9,3 +9,15 @@ before_install:
 
 script:
   - docker run -e CI=true seol1999/study-docker-kubernetes npm run test
+
+deploy:
+  provider: elasticbeanstalk
+  region: "ap-northeast-2"
+  app: "study-docker-kubernetes"
+  env: "Studydockerkubernetes-env"
+  bucket_name: "elasticbeanstalk-ap-northeast-2-410506141604"
+  bucket_path: "study-docker-kubernetes"
+  on:
+    branch: main
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
