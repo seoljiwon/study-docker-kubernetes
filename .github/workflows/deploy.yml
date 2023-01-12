@@ -12,3 +12,18 @@ jobs:
       - run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
       - run: docker build -t seoljiwon/study-docker-kubernetes -f Dockerfile.dev .
       - run: docker run -e CI=true seoljiwon/study-docker-kubernetes npm test
+
+      - name: Generate deployment package
+        run: zip -r deploy.zip . -x '*.git*'
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v18
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+          application_name: study-docker-kubernetes
+          environment_name: Studydockerkubernetes-env
+          existing_bucket_name: elasticbeanstalk-ap-northeast-2-410506141604
+          region: ap-northeast-2
+          version_label: ${{ github.sha }}
+          deployment_package: deploy.zip
